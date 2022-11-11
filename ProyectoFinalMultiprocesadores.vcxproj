@@ -129,11 +129,13 @@
   <ItemGroup>
     <ClCompile Include="file_handler.c" />
     <ClCompile Include="main.c" />
+    <ClCompile Include="math_operation.c" />
     <ClCompile Include="user_input_handler.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="file_handler.h" />
     <ClInclude Include="main.h" />
+    <ClInclude Include="math_operation.h" />
     <ClInclude Include="user_input_handler.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

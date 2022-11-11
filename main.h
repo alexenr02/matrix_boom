@@ -13,17 +13,29 @@
 #include <malloc.h>
 
 #define ALIGNMENT_8                         8
+#define FIRST_MATRIX                        0
+#define SECOND_MATRIX                       1
+
 // total amount of elements of the array
 #define TOTAL_ELEM_ARRAY                    (matrix_data[i].rows*matrix_data[i].columns)
-#define TOTAL_ELEM_ARRAY_PTR                (matrix_data->rows*matrix_data->columns)
-#define FIRST_ARRAY                         0
-#define SECOND_ARRAY                        1
+#define MATRIX(i)                           matrix_data[i].ptrArray
+#define POSITION(x,y)                       (x * matrix_data[i].columns) + y
+#define MAX_ROWS                            matrix_data[i].rows
+#define MAX_COLUMNS                         matrix_data[i].columns
+
+
+#define print_matrix(which_matrix)          printArray(which_matrix, matrix_data);
+
+
+#define ending_program                      _aligned_free(array1); \
+                                            return 3;
+
+
 #define MALLOC_ARRAY(number, type) \
     ((type *)malloc((number) * sizeof(type)))
 
 #define ALIGNED_MALLOC(SIZE, ALIGNMENT, TYPE) \
     (TYPE*)_aligned_malloc(SIZE*sizeof(TYPE*),ALIGNMENT)
-
 
 //          __mm__malloc   preferencia intrinsicas
 
@@ -60,6 +72,11 @@ typedef enum processStatus
 static double* array1;
 static double* array2;
 
+
+//Struct that contains the all the important information about a matrix defined. 
+//The data the struct contains is the quantity of rows and columns the matrix has, how many elements it has and how many is the 
+//number of elements in its txt file
+//The ptrArray points to the beggining of the allocated memory, so It can access the array from this struct.
 typedef struct matrix
 {
     long long rows;

@@ -24,6 +24,9 @@
     <ClCompile Include="user_input_handler.c">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
+    <ClCompile Include="math_operation.c">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -33,6 +36,9 @@
       <Filter>Archivos de origen</Filter>
     </ClInclude>
     <ClInclude Include="user_input_handler.h">
+      <Filter>Archivos de origen</Filter>
+    </ClInclude>
+    <ClInclude Include="math_operation.h">
       <Filter>Archivos de origen</Filter>
     </ClInclude>
   </ItemGroup>
