@@ -1,6 +1,8 @@
 
 #include "main.h"
 #include "file_handler.h"
+#include "user_input_handler.h"
+#include "math_operation.h"
 
 /*
 * Function that executes the reading process of the two txt files that contains the arrays of array
@@ -24,13 +26,27 @@ processStatus_t loadTxts(matrix_t matrix_data[])
     //loop to read two files that contains many double (8 byte) variables
     for (uint8_t i = 0; i < NUM_FILES; i++)
     {
-        printf("---Matrix %d---\n", i + 1);
+        printf("\n---Matrix %d---\n", i + 1);
         printf("Give me the rows: ");
         matrix_data[i].rows = userinput(matrix_data[i].rows);
         printf("Give me the columns: ");
         matrix_data[i].columns = userinput(matrix_data[i].columns);
         matrix_data[i].numElements = TOTAL_ELEM_ARRAY;
 
+        if (i == SECOND_MATRIX)
+        {
+            if ((validation_of_matMult(matrix_data) == Error))
+            {
+                return Error;
+            }
+
+            matrix_data[RESULT_MATRIX].rows = matrix_data[FIRST_MATRIX].rows;
+            matrix_data[RESULT_MATRIX].columns = matrix_data[SECOND_MATRIX].columns;
+            matrix_data[RESULT_MATRIX].numElements = TOTAL_ELEM_RESULT_MATRIX;
+            matrix_data[RESULT_MATRIX].numElementsInTxt = TOTAL_ELEM_RESULT_MATRIX;
+
+        }
+        
         processStatus_t reading = (fopen_s(&filePointer, stringArray[i], READING_MODE)); //Opening file in read mode
         filePointer_aux = filePointer; // save the file pointer read
 
@@ -134,15 +150,27 @@ processStatus_t convertToDynamic(FILE* filePointer, uint8_t i, matrix_t matrix_d
         break;
         //Fill the second matrix
     case SECOND_MATRIX:
-        array2 = ALIGNED_MALLOC(TOTAL_ELEM_ARRAY, ALIGNMENT_8, double); //      returns an 8 BYTE aligned block of memory of total elements * 8 bytes
-
-        if (array2 != NULL)
+        array2 = ALIGNED_MALLOC(TOTAL_ELEM_ARRAY, ALIGNMENT_8, double); //      returns an 8 BYTE aligned block of memory of (total elements * 8 bytes)
+        array3 = ALIGNED_MALLOC(matrix_data[RESULT_MATRIX].rows*matrix_data[RESULT_MATRIX].columns, ALIGNMENT_8, double); //      returns an 8 BYTE aligned block of memory of (total elements * 8 bytes)
+        DEBUG(printf("Memoria almacenada correctamente: %lld bytes\n", (long long)_aligned_msize(array3, ALIGNMENT_8, 0));)
+        if ((array2 != NULL) || (array3 != NULL))
         {
             matrix_data[i].ptrArray = array2;
+            matrix_data[RESULT_MATRIX].ptrArray = array3;
+
+            //initializing with 0's the third matrix that will allocate the result
+            for (long long i = 0; i < matrix_data[RESULT_MATRIX].rows; i++)
+            {
+                for (long long j = 0; j < matrix_data[RESULT_MATRIX].columns; j++)
+                {
+                    MAT_AND_COORD(RESULT_MATRIX, i, j) = 0;
+                }
+            }
+
             readElements(filePointer, i, matrix_data);
             printArray(i, matrix_data);
 
-            //DEBUG(printf("Memoria almacenada correctamente: %lld bytes\n", (long long)_aligned_msize(array1, ALIGNMENT_8, 0));)
+            DEBUG(printf("Memoria almacenada correctamente: %lld bytes\n", (long long)_aligned_msize(array1, ALIGNMENT_8, 0));)
         }
         else
         {
@@ -171,7 +199,7 @@ static void readElements(FILE* filePointer, uint8_t i, matrix_t matrix_data[])
     double fp;
     long long max_elem_allowed = TOTAL_ELEM_ARRAY;
 
-    int r = 0, c = 0;
+    long long r = 0, c = 0;
 
     rewind(filePointer);
     while ((feof(filePointer) == 0) && max_elem_allowed != 0)
@@ -183,7 +211,9 @@ static void readElements(FILE* filePointer, uint8_t i, matrix_t matrix_data[])
             {
                 if (c < matrix_data[i].columns)
                 {
-                    (matrix_data[i].ptrArray[(r * matrix_data[i].columns) + c]) = fp;
+                    MAT_AND_COORD(i, r, c) = fp;
+                    //(MATRIX(i)[POSITION(r, c)]) = fp;
+                    //(matrix_data[i].ptrArray[(r * matrix_data[i].columns) + c]) = fp;
                     c++;
                     if (c == matrix_data[i].columns)
                     {
@@ -196,21 +226,38 @@ static void readElements(FILE* filePointer, uint8_t i, matrix_t matrix_data[])
         }
         max_elem_allowed--;
     }
+
+    
+
 }
 
 
 
-processStatus_t printArray(uint8_t i, matrix_t matrix_data[])
+
+
+processStatus_t writeElements(matrix_t matrix_data[])
 {
-    printf("\n");
-    for (long long x = 0; x < MAX_ROWS; x++)
+    FILE* filePointer_result; /* declare the file pointer */
+
+    processStatus_t reading = (fopen_s(&filePointer_result, "matrizC.txt", W_R_MODE)); //Opening file in write mode
+    //Validation of the file reading process
+    if (((reading != Success) || (filePointer_result == NULL || filePointer_result == 0)))
     {
-        for (long long y = 0; y < MAX_COLUMNS; y++)
+        printf("Error! Failed to create and open file!");
+        return Error;
+    }
+    
+    for (long long i = 0; i < matrix_data[RESULT_MATRIX].rows; i++)
+    {
+        for (long long j = 0; j < matrix_data[RESULT_MATRIX].columns; j++)
         {
-            printf("%.10lf\t", MATRIX(i)[POSITION(x, y)]);
+            fprintf(filePointer_result, "%.10lf\n", MAT_AND_COORD(RESULT_MATRIX, i, j));
         }
-        printf("\t\n");
+    }
+
+    if (fclose(filePointer_result) != Success || filePointer_result == NULL)  /* close the file prior to exiting the routine */
+    {
+        printf("problemas al cerrar el archivo");
+        return Error;
     }
 }
-
-

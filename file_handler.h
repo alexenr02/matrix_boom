@@ -3,10 +3,11 @@
 #define __file_handler_h
 
 #define READING_MODE                        "r"
-
+#define WRITING_MODE                        "w"
+#define W_R_MODE							"w+"
 #if 1
-#define MATRIXA_FILENAME                    "matrixA2500.txt"
-#define MATRIXB_FILENAME                    "matrixB2500.txt"
+#define MATRIXA_FILENAME                    "matrizA.txt"
+#define MATRIXB_FILENAME                    "matrizB.txt"
 #else
 #define MATRIXA_FILENAME                    "matrixA1048576.txt"
 #define MATRIXB_FILENAME                    "matrixB1048576.txt"
@@ -79,6 +80,10 @@ void readElements(FILE* filePointer, uint8_t i, matrix_t matrix_data[]);
 
 
 
+
+
+
+
 /*
 * Function
 *
@@ -88,12 +93,7 @@ void readElements(FILE* filePointer, uint8_t i, matrix_t matrix_data[]);
 *
 *
 */
-
-processStatus_t printArray(uint8_t i, matrix_t matrix_data[]);
-
-
-
-
+processStatus_t writeElements(matrix_t matrix_data[]);
 
 
 
