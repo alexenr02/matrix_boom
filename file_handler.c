@@ -137,7 +137,7 @@ processStatus_t convertToDynamic(FILE* filePointer, uint8_t i, matrix_t matrix_d
         {
             matrix_data[i].ptrArray = array1;
             readElements(filePointer, i, matrix_data);
-            printArray(i, matrix_data);
+            //printArray(i, matrix_data);
             //DEBUG(printf("Memoria almacenada correctamente: %lld bytes\n", (long long)_aligned_msize(array1, ALIGNMENT_8, 0));)
         }
         else
@@ -168,7 +168,7 @@ processStatus_t convertToDynamic(FILE* filePointer, uint8_t i, matrix_t matrix_d
             }
 
             readElements(filePointer, i, matrix_data);
-            printArray(i, matrix_data);
+            //printArray(i, matrix_data);
 
             DEBUG(printf("Memoria almacenada correctamente: %lld bytes\n", (long long)_aligned_msize(array1, ALIGNMENT_8, 0));)
         }

@@ -30,50 +30,23 @@ processStatus_t validation_of_matMult(matrix_t matrix_data[])
 	return Success;
 }
 
-processStatus_t matrix_mult_serial(matrix_t matrix_data[])
-{
-	long long auxK = matrix_data[FIRST_MATRIX].columns;
-	for (long long i = 0; i < matrix_data[RESULT_MATRIX].rows; i++)
-	{
-		for (long long j = 0; j < matrix_data[RESULT_MATRIX].columns; j++)
-		{
-			for (long long k = 0; k < auxK; k++)
-			{
-				MAT_AND_COORD(RESULT_MATRIX, i, j) = MAT_AND_COORD(RESULT_MATRIX, i, j) + (MAT_AND_COORD(FIRST_MATRIX,i,k) * MAT_AND_COORD(SECOND_MATRIX, k, j));
-			}
-		}
-	}
-	//for (long long i = 0; i < matrix_data[RESULT_MATRIX].rows; i++)
-	//{
-	//	for (long long j = 0; j < matrix_data[RESULT_MATRIX].columns; j++)
-	//	{
-	//		for (long long k = 0; k < matrix_data[RESULT_MATRIX].columns; k++)
-	//		{
-	//			MAT_AND_COORD(RESULT_MATRIX, i, j) = MAT_AND_COORD(FIRST_MATRIX, i, j) * MAT_AND_COORD(SECOND_MATRIX, i, j);
-	//		}
-	//		
-	//	}
-	//}
 
-
-}
-
-void matrix_transpose(matrix_t matrix_data[],uint8_t which_matrix)
+void matrix_transpose(matrix_t matrix_data[], uint8_t which_matrix)
 {
 	double aux = 0;
-	
+
 	matrix_data[TRANSPOSE_MATRIX].ptrArray = ALIGNED_MALLOC(matrix_data[which_matrix].rows * matrix_data[which_matrix].columns, ALIGNMENT_8, double); //      returns an 8 BYTE aligned block of memory of (total elements * 8 bytes)
 	matrix_data[TRANSPOSE_MATRIX].columns = matrix_data[which_matrix].rows;
 	matrix_data[TRANSPOSE_MATRIX].rows = matrix_data[which_matrix].columns;
 
-	
+
 	if (matrix_data[TRANSPOSE_MATRIX].ptrArray != NULL)
 	{
 		for (long long i = 0; i < matrix_data[which_matrix].rows; i++)
 		{
 			for (long long j = 0; j < matrix_data[which_matrix].columns; j++)
 			{
-				MAT_AND_COORD(TRANSPOSE_MATRIX, j,i) = MAT_AND_COORD(which_matrix, i, j);
+				MAT_AND_COORD(TRANSPOSE_MATRIX, j, i) = MAT_AND_COORD(which_matrix, i, j);
 			}
 		}
 	}
@@ -89,4 +62,38 @@ void matrix_transpose(matrix_t matrix_data[],uint8_t which_matrix)
 		}
 	}
 	_aligned_free(matrix_data[TRANSPOSE_MATRIX].ptrArray);
+}
+
+processStatus_t matrix_mult_serial(matrix_t matrix_data[])
+{
+	long long auxK = matrix_data[FIRST_MATRIX].columns;
+	for (long long i = 0; i < matrix_data[RESULT_MATRIX].rows; i++)
+	{
+		for (long long j = 0; j < matrix_data[RESULT_MATRIX].columns; j++)
+		{
+			for (long long k = 0; k < auxK; k++)
+			{
+				MAT_AND_COORD(RESULT_MATRIX, i, j) = MAT_AND_COORD(RESULT_MATRIX, i, j) + (MAT_AND_COORD(FIRST_MATRIX,i,k) * MAT_AND_COORD(SECOND_MATRIX, k, j));
+			}
+		}
+	}
+}
+
+processStatus_t matrix_mult_omp(matrix_t matrix_data[])
+{
+
+
+    long auxK = matrix_data[FIRST_MATRIX].columns;
+
+	for (long long i = 0; i < matrix_data[RESULT_MATRIX].rows; i++)
+	{
+		for (long long j = 0; j < matrix_data[RESULT_MATRIX].columns; j++)
+		{
+
+			for (long long k = 0; k < auxK; k++)
+			{
+				MAT_AND_COORD(RESULT_MATRIX, i, j) = MAT_AND_COORD(RESULT_MATRIX, i, j) + (MAT_AND_COORD(FIRST_MATRIX, i, k) * MAT_AND_COORD(SECOND_MATRIX, k, j));
+			}
+		}
+	}
 }

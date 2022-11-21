@@ -11,6 +11,9 @@
 #include <string.h>
 #include <errno.h>
 #include <malloc.h>
+#include <Windows.h>
+#include <time.h>
+
 
 #define ALIGNMENT_8                         8
 #define FIRST_MATRIX                        0
