@@ -36,7 +36,6 @@
 
 #define print_matrix(which_matrix)          printArray(which_matrix, matrix_data);
 
-
 #define ending_program                      _aligned_free(array1); \
                                             return 3;
 
